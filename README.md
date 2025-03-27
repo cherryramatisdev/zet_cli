@@ -5,6 +5,7 @@
 
 ## Commands
 
+0. `zet (i)nit`: Initialize the repo in the current empty directory
 1. `zet (t)itles`: Print all the titles from the entries (the tags are presented
 alongside the title, for easy filtering in notes like journaling or other tag)
 2. `zet (g)rep`: Grep for particular substring or regex pattern within your

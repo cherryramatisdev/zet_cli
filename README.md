@@ -1,0 +1,55 @@
+# Zet - A cli for zettelkasten with easy indexing
+
+> Inspiration taken from the amazing work of [@rwxrob](https://github.com/rwxrob)
+> keg project (installable via `go install github.com/rwxrob/keg/cmd/keg@latest`)
+
+## Commands
+
+1. `zet (t)itles`: Print all the titles from the entries (the tags are presented
+alongside the title, for easy filtering in notes like journaling or other tag)
+2. `zet (g)rep`: Grep for particular substring or regex pattern within your
+entries content
+3. `zet (c)reate`: Create a new entry, register on the index file and open your
+`$EDITOR` on the particular file.
+4. `zet (conf)ig`: Sub commands related to the config
+  a) `zet (conf)ig print`: Print all the values currently set for the config
+(including defaults, the default should contain a label expliciting its
+default value)
+  b) `zet (conf)ig modify <key> <value>`: Change or create a particular key on the
+config, errors out if the key doesn't exist on the spec
+  c) `zet (conf)ig get <key>`: Print the value for a particular config key, errors
+out if the key doens't exist on the config file
+5. `zet (n)ow`: Create a new entry with the title predefined for the current date
+and a special tag for journaling, that way it can be filtered differently from
+the rest of the notes
+6. `zet (a)genda`: List all the checkboxes `- [ ]` in your repository and print
+out a list of unfinished todos with optional schedules (with the syntax
+`@schedule <date>`)
+7. `zet (im)port`: Import a directory with a *particular structure* into our
+another repo
+
+> That *particular structure* is: `<numeric_id>/README.md` for each entry,
+inside the directory with the numeric id its possible to have assets, we'll
+recursively call all of those
+> The `README.md` need to have a top level title `#` that will be used to index
+on the database.
+
+## The index file
+
+The index file will be a `json` for easier parsing (with `jq` for example) with the following structure:
+
+```json
+{
+  // ...metadata stuff like author, repo, etc etc
+  "entries": [
+    {
+      "id": 1,
+      "title": "Welcome to my blog",
+      "created_at": "2024-10-27 18:55:01Z",
+      "modified_at": "2025-01-27 18:55:01Z", // can be null
+      "dir_path": "../1",
+      "entry_file": "README.md"
+    }
+  ]
+}
+```

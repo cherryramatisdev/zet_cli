@@ -14,6 +14,9 @@ pub enum Commands {
     /// Print all the titles from the entries (the tags are presented alongside the title, for easy
     /// filtering in notes like journaling or other tag)
     Titles,
+    Edit {
+        term: String,
+    },
     /// Search for particular substring or regex pattern within your entries content 
     Grep {
         term: String,

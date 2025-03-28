@@ -1,0 +1,10 @@
+[package]
+name = "zettelkasten"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "zet"
+path = "src/main.rs"

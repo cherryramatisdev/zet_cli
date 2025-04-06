@@ -15,7 +15,7 @@ fn main() {
     match cli.command {
         cli::Commands::Init => cmds::init::call().unwrap_print(),
         cli::Commands::Titles => cmds::titles::call().unwrap_print(),
-        cli::Commands::Grep { term } => todo!(),
+        cli::Commands::Grep { term } => cmds::grep::call(term).unwrap_print(),
         cli::Commands::Create => cmds::create::call().unwrap_print(),
         cli::Commands::Config { command } => todo!(),
         cli::Commands::Now => cmds::now::call().unwrap_print(),

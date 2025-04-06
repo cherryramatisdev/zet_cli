@@ -1,7 +1,8 @@
-pub mod init;
 pub mod create;
-pub mod sync;
-pub mod now;
-pub mod import;
-pub mod titles;
 pub mod edit;
+pub mod grep;
+pub mod import;
+pub mod init;
+pub mod now;
+pub mod sync;
+pub mod titles;

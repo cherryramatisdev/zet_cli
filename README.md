@@ -18,7 +18,7 @@ cargo install zettelkasten-cli
 1. *DONE* `zet (t)itles`: Print all the titles from the entries (the tags are presented
 alongside the title, for easy filtering in notes like journaling or other tag)
 2. *DONE* `zet (e)dit`: Get a entry by any substring of the available titles.
-3. `zet (g)rep`: Search for particular substring or regex pattern within your
+3. *DONE* `zet (g)rep`: Search for particular substring or regex pattern within your
 entries content
 4. *DONE* `zet (c)reate`: Create a new entry, register on the index file and open your
 `$EDITOR` on the particular file.

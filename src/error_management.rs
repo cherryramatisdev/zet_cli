@@ -1,6 +1,10 @@
 use anyhow::Result;
 use colored::Colorize;
 
+pub fn err_print(msg: String) {
+    println!("{}", msg.red().bold());
+}
+
 pub trait ResultExt<T> {
     fn unwrap_print(&self);
 }
@@ -9,7 +13,7 @@ pub trait ResultExt<T> {
 impl<T> ResultExt<T> for Result<T> {
     fn unwrap_print(&self) {
         if let Err(msg) = self {
-            println!("{}", msg.to_string().red().bold());
+            err_print(msg.to_string());
             std::process::exit(1);
         }
     }

@@ -20,7 +20,7 @@ fn main() {
         cli::Commands::Config { command } => todo!(),
         cli::Commands::Now => cmds::now::call().unwrap_print(),
         cli::Commands::Agenda => todo!(),
-        cli::Commands::Import { path } => todo!(),
+        cli::Commands::Import { path } => cmds::import::call(path).unwrap_print(),
         cli::Commands::Edit { term } => todo!(),
         cli::Commands::Sync => cmds::sync::call().unwrap_print(),
     }

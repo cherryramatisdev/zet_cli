@@ -45,7 +45,9 @@ system("git", "push", "origin", $tag);
 say "All right, deploying the binaries";
 my $token = `gh auth token`;
 chomp $token;
-system("GITHUB_TOKEN=$token goreleaser release --clean");
+my $openssl = `brew --prefix openssl\@3.0`;
+chomp $openssl;
+system("GITHUB_TOKEN=$token OPENSSL_DIR=$openssl OPENSSL_INCLUDE_DIR=$openssl/include OPENSSL_LIB_DIR=$openssl/lib goreleaser release --clean");
 
 sub command_exists {
     my $cmd = shift;

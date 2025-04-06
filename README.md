@@ -3,6 +3,15 @@
 > Inspiration taken from the amazing work of [@rwxrob](https://github.com/rwxrob)
 > keg project (installable via `go install github.com/rwxrob/keg/cmd/keg@latest`)
 
+## How to install?
+
+Right now we just support installing with the `cargo` package manager, so you
+can [setup rust and cargo](https://rustup.rs) and then run the following command 👇
+
+```sh
+cargo install zettelkasten-cli
+```
+
 ## Commands
 
 0. `zet (i)nit`: Initialize the repo in the current empty directory

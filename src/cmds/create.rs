@@ -1,8 +1,8 @@
 use std::io::BufRead;
 
 use anyhow::bail;
-use git2::{IndexAddOption, Repository};
 
+use crate::git_utils;
 use crate::repo_schema::{Entry, RepoSchema};
 
 pub fn call() -> anyhow::Result<()> {
@@ -30,23 +30,7 @@ pub fn call() -> anyhow::Result<()> {
 
     schema.save()?;
 
-    let repo = Repository::open(schema_path)?;
-    let head = repo.head()?;
-    let parent_commit = repo.find_commit(head.target().unwrap())?;
-    let mut index = repo.index()?;
-    index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
-    index.write()?;
-    let tree_oid = index.write_tree()?;
-    let tree = repo.find_tree(tree_oid)?;
-    let signature = repo.signature()?;
-    repo.commit(
-        Some("HEAD"),
-        &signature,
-        &signature,
-        format!("Add new note: {}", header).as_str(),
-        &tree,
-        &[&parent_commit],
-    )?;
+    git_utils::commit(format!("Add new note: {}", header), Some(schema_path))?;
 
     Ok(())
 }

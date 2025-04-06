@@ -7,6 +7,7 @@ mod cli;
 mod cmds;
 mod error_management;
 mod repo_schema;
+mod git_utils;
 
 fn main() {
     let cli = Cli::parse();

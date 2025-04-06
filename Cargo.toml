@@ -1,7 +1,9 @@
 [package]
-name = "zettelkasten"
+name = "zettelkasten-cli"
 version = "0.1.0"
 edition = "2021"
+description = "A zettelkasten CLI that just works and gets out of your way"
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.97"

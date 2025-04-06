@@ -23,5 +23,6 @@ fn main() {
         cli::Commands::Import { path } => cmds::import::call(path).unwrap_print(),
         cli::Commands::Edit { term } => cmds::edit::call(term).unwrap_print(),
         cli::Commands::Sync => cmds::sync::call().unwrap_print(),
+        cli::Commands::View { term } => cmds::view::call(term).unwrap_print(),
     }
 }

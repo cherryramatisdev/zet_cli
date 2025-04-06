@@ -18,14 +18,10 @@ pub enum Commands {
     Titles,
     /// Open a entry by a substring of the title.
     #[command(visible_alias("e"))]
-    Edit {
-        term: String,
-    },
+    Edit { term: String },
     #[command(visible_alias("g"))]
-    /// Search for particular substring or regex pattern within your entries content 
-    Grep {
-        term: String,
-    },
+    /// Search for particular substring or regex pattern within your entries content
+    Grep { term: String },
     /// Create a new entry, register on the index file and open your `$EDITOR` on the particular
     /// file.
     #[command(visible_alias("c"))]
@@ -46,11 +42,11 @@ pub enum Commands {
     Agenda,
     /// Import a directory with a *particular structure* into our another repo
     #[command(visible_alias("im"))]
-    Import {
-        path: String,
-    },
+    Import { path: String },
     #[command(visible_alias("s"))]
     Sync,
+    #[command(visible_alias("v"))]
+    View { term: String },
 }
 
 #[derive(Subcommand)]

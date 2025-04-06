@@ -6,3 +6,4 @@ pub mod init;
 pub mod now;
 pub mod sync;
 pub mod titles;
+pub mod view;

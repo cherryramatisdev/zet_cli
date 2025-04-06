@@ -1,4 +1,4 @@
-use clap::{CommandFactory, Parser};
+use clap::Parser;
 use cli::Cli;
 
 use error_management::ResultExt;

@@ -44,6 +44,23 @@ impl RepoSchema {
     }
 
     pub fn get_schema_path() -> Result<String> {
+        match std::env::var("ZET_CURRENT") {
+            Ok(path) => Ok(format!("{}", path)),
+            Err(_) => {
+                if let Ok(false) = std::fs::exists("index.json") {
+                    Err(anyhow::Error::msg(
+                        "Your current directory isnt a zettelkasten repo",
+                    ))
+                } else {
+                    let pwd = std::env::current_dir()?;
+
+                    Ok(pwd.to_string_lossy().into_owned())
+                }
+            }
+        }
+    }
+
+    fn get_schema_index_path() -> Result<String> {
         let dir_path = match std::env::var("ZET_CURRENT") {
             Ok(path) => format!("{}", path),
             Err(_) => {
@@ -52,12 +69,6 @@ impl RepoSchema {
                 pwd.to_string_lossy().into_owned()
             }
         };
-
-        Ok(dir_path)
-    }
-
-    fn get_schema_index_path() -> Result<String> {
-        let dir_path = RepoSchema::get_schema_path()?;
 
         Ok(format!("{}/index.json", dir_path))
     }

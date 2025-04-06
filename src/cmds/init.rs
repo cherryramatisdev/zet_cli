@@ -1,48 +1,8 @@
-use std::io::Write;
-
-use colored::Colorize;
 use anyhow::{bail, Result};
-use serde::{Deserialize, Serialize};
+use colored::Colorize;
+use git2::{IndexAddOption, Repository};
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Entry {
-    id: u16,
-    title: String,
-    created_at: chrono::NaiveDateTime,
-    modified_at: chrono::NaiveDateTime,
-    dir_path: String,
-    entry_file: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct RepoSchema {
-    author: String,
-    repo_url: Option<String>,
-    entries: Vec<Entry>,
-}
-
-impl RepoSchema {
-    fn new() -> Self {
-        let author = get_input("Author name of the repo: ", true);
-        let repo_url = get_input("Repo URL (if you dont have one, press enter): ", false);
-
-        Self {
-            author,
-            repo_url: if repo_url.is_empty() {
-                None
-            } else {
-                Some(repo_url)
-            },
-            entries: vec![],
-        }
-    }
-
-    fn to_json_string(&self) -> Result<String> {
-        let json = serde_json::to_string(self)?;
-
-        Ok(json)
-    }
-}
+use crate::repo_schema::RepoSchema;
 
 pub fn call() -> Result<()> {
     let entries = std::fs::read_dir(".")?;
@@ -59,9 +19,12 @@ pub fn call() -> Result<()> {
         bail!("Please install the `gh` binary in your system at: https://cli.github.com");
     }
 
-    let schema = RepoSchema::new().to_json_string()?;
+    let repo = Repository::init(".")?;
+    let schema = RepoSchema::new();
 
-    std::fs::write("index.json", &schema)?;
+    schema.save()?;
+
+    init_repo(repo)?;
 
     let pwd = std::env::current_dir()?;
     let shell = std::env::var("SHELL")?;
@@ -75,46 +38,40 @@ pub fn call() -> Result<()> {
         "<your shell config file>"
     };
 
-    println!("{}", format!(
-        r#"
+    println!(
+        "{}",
+        format!(
+            r#"
 Done! repo created
 
 Run this command to globally refer to your repo when running zet commands:
 
 echo "export ZET_CURRENT={}" >> {}
         "#,
-        pwd.to_str().unwrap(),
-        shell
-    ).green().bold());
+            pwd.to_str().unwrap(),
+            shell
+        )
+        .green()
+        .bold()
+    );
 
     Ok(())
 }
 
-/// Gets input from the user with optional required flag
-///
-/// # Arguments
-/// * `prompt` - The message to display to the user
-/// * `required` - Whether the input is mandatory (cannot be empty)
-///
-/// # Returns
-/// The user's input as a String
-fn get_input(prompt: &str, required: bool) -> String {
-    loop {
-        print!("{}", prompt);
-        std::io::stdout().flush().unwrap(); // Ensure prompt displays immediately
-
-        let mut input = String::new();
-        std::io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read input");
-
-        let input = input.trim().to_string();
-
-        // If not required, or if required and not empty, return the input
-        if !required || (required && !input.is_empty()) {
-            return input;
-        }
-
-        println!("Error: This field is required. Please enter a value.");
-    }
+fn init_repo(repo: Repository) -> Result<(), anyhow::Error> {
+    let mut index = repo.index()?;
+    index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
+    index.write()?;
+    let tree_oid = index.write_tree()?;
+    let tree = repo.find_tree(tree_oid)?;
+    let signature = repo.signature()?;
+    repo.commit(
+        Some("HEAD"),
+        &signature,
+        &signature,
+        "Initial commit",
+        &tree,
+        &[],
+    )?;
+    Ok(())
 }

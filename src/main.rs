@@ -6,6 +6,7 @@ use error_management::ResultExt;
 mod cli;
 mod cmds;
 mod error_management;
+mod repo_schema;
 
 fn main() {
     let cli = Cli::parse();
@@ -14,11 +15,12 @@ fn main() {
         cli::Commands::Init => cmds::init::call().unwrap_print(),
         cli::Commands::Titles => todo!(),
         cli::Commands::Grep { term } => todo!(),
-        cli::Commands::Create => todo!(),
+        cli::Commands::Create => cmds::create::call().unwrap_print(),
         cli::Commands::Config { command } => todo!(),
         cli::Commands::Now => todo!(),
         cli::Commands::Agenda => todo!(),
         cli::Commands::Import { path } => todo!(),
         cli::Commands::Edit { term } => todo!(),
+        cli::Commands::Sync => cmds::sync::call().unwrap_print(),
     }
 }

@@ -15,7 +15,7 @@ cargo install zettelkasten-cli
 ## Commands
 
 0. *DONE* `zet (i)nit`: Initialize the repo in the current empty directory
-1. `zet (t)itles`: Print all the titles from the entries (the tags are presented
+1. *DONE* `zet (t)itles`: Print all the titles from the entries (the tags are presented
 alongside the title, for easy filtering in notes like journaling or other tag)
 2. `zet (e)dit`: Get a entry by any substring of the available titles.
 3. `zet (g)rep`: Search for particular substring or regex pattern within your

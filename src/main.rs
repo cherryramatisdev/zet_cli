@@ -18,7 +18,7 @@ fn main() {
         cli::Commands::Grep { term } => todo!(),
         cli::Commands::Create => cmds::create::call().unwrap_print(),
         cli::Commands::Config { command } => todo!(),
-        cli::Commands::Now => todo!(),
+        cli::Commands::Now => cmds::now::call().unwrap_print(),
         cli::Commands::Agenda => todo!(),
         cli::Commands::Import { path } => todo!(),
         cli::Commands::Edit { term } => todo!(),

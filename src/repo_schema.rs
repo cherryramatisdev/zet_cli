@@ -94,6 +94,19 @@ impl RepoSchema {
     }
 }
 
+pub fn find_entry_by_term(schema: &mut RepoSchema, term: String) -> Result<Option<&mut Entry>> {
+    if term.chars().all(|ch| ch.is_numeric()) {
+        let term_id = term.parse::<u16>()?;
+
+        return Ok(schema.entries.iter_mut().find(|entry| entry.id == term_id));
+    }
+
+    Ok(schema
+        .entries
+        .iter_mut()
+        .find(|entry| entry.title.to_lowercase().contains(term.to_lowercase().as_str())))
+}
+
 /// Gets input from the user with optional required flag
 ///
 /// # Arguments

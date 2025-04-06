@@ -1,32 +1,15 @@
 use std::io::BufRead;
 
-use anyhow::bail;
+use anyhow::{bail, Result};
 
 use crate::git_utils;
 use crate::repo_schema::{Entry, RepoSchema};
 
-pub fn call() -> anyhow::Result<()> {
+pub fn call() -> Result<()> {
     let (header, content) = get_note_interactively()?;
 
     let schema_path = RepoSchema::get_schema_path()?;
-    let mut schema = RepoSchema::get_config()?;
-
-    let new_id = match schema.entries.last() {
-        Some(entry) => entry.id + 1,
-        None => 1,
-    };
-
-    std::fs::create_dir(format!("{}/{}", &schema_path, &new_id))?;
-    std::fs::write(format!("{}/{}/README.md", &schema_path, &new_id), &content)?;
-
-    schema.entries.push(Entry {
-        id: new_id,
-        title: header.clone(),
-        created_at: chrono::Local::now().naive_local(),
-        modified_at: None,
-        dir_path: new_id.to_string(),
-        entry_file: String::from("README.md"),
-    });
+    let schema = create_note(header.clone(), content, None)?;
 
     schema.save()?;
 
@@ -60,8 +43,57 @@ fn get_note_interactively() -> Result<(String, String), anyhow::Error> {
     Ok((header, content))
 }
 
-fn get_rando_file_name(now: chrono::DateTime<chrono::Local>) -> String {
+pub fn get_rando_file_name(now: chrono::DateTime<chrono::Local>) -> String {
     format!("/tmp/notes_{}.md", now.format("%d%m%Y%H%M%S"))
+}
+
+pub fn create_note(
+    header: String,
+    content: String,
+    modified: Option<chrono::DateTime<chrono::Local>>,
+) -> Result<RepoSchema> {
+    let schema_path = RepoSchema::get_schema_path()?;
+    let mut schema = RepoSchema::get_config()?;
+
+    let new_id = if let Some(_) = modified {
+        // NOTE: If the modified is passed, we assume the id exists, is there a way to encode this
+        // on the type system?
+        schema
+            .entries
+            .iter()
+            .find(|en| en.title == header)
+            .unwrap()
+            .id
+    } else {
+        let id = match schema.entries.last() {
+            Some(entry) => entry.id + 1,
+            None => 1,
+        };
+
+        std::fs::create_dir(format!("{}/{}", &schema_path, &id))?;
+        std::fs::write(format!("{}/{}/README.md", &schema_path, &id), &content)?;
+
+        id
+    };
+
+    if let Some(modified) = modified {
+        schema
+            .entries
+            .iter_mut()
+            .find(|e| e.title == header)
+            .map(|entry| entry.modified_at = Some(modified.naive_local()));
+    } else {
+        schema.entries.push(Entry {
+            id: new_id,
+            title: header,
+            created_at: chrono::Local::now().naive_local(),
+            modified_at: None,
+            dir_path: format!("{}/{}", schema_path, new_id.to_string()),
+            entry_file: String::from("README.md"),
+        })
+    }
+
+    Ok(schema)
 }
 
 #[cfg(test)]

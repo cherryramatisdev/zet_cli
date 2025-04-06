@@ -21,7 +21,7 @@ fn main() {
         cli::Commands::Now => cmds::now::call().unwrap_print(),
         cli::Commands::Agenda => todo!(),
         cli::Commands::Import { path } => cmds::import::call(path).unwrap_print(),
-        cli::Commands::Edit { term } => todo!(),
+        cli::Commands::Edit { term } => cmds::edit::call(term).unwrap_print(),
         cli::Commands::Sync => cmds::sync::call().unwrap_print(),
     }
 }

@@ -1,5 +1,6 @@
-use colored::Colorize;
 use anyhow::{bail, Result};
+use colored::Colorize;
+use git2::{IndexAddOption, Repository};
 
 use crate::repo_schema::RepoSchema;
 
@@ -18,7 +19,12 @@ pub fn call() -> Result<()> {
         bail!("Please install the `gh` binary in your system at: https://cli.github.com");
     }
 
-    RepoSchema::new().save()?;
+    let repo = Repository::init(".")?;
+    let schema = RepoSchema::new();
+
+    schema.save()?;
+
+    init_repo(repo)?;
 
     let pwd = std::env::current_dir()?;
     let shell = std::env::var("SHELL")?;
@@ -32,17 +38,40 @@ pub fn call() -> Result<()> {
         "<your shell config file>"
     };
 
-    println!("{}", format!(
-        r#"
+    println!(
+        "{}",
+        format!(
+            r#"
 Done! repo created
 
 Run this command to globally refer to your repo when running zet commands:
 
 echo "export ZET_CURRENT={}" >> {}
         "#,
-        pwd.to_str().unwrap(),
-        shell
-    ).green().bold());
+            pwd.to_str().unwrap(),
+            shell
+        )
+        .green()
+        .bold()
+    );
 
+    Ok(())
+}
+
+fn init_repo(repo: Repository) -> Result<(), anyhow::Error> {
+    let mut index = repo.index()?;
+    index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
+    index.write()?;
+    let tree_oid = index.write_tree()?;
+    let tree = repo.find_tree(tree_oid)?;
+    let signature = repo.signature()?;
+    repo.commit(
+        Some("HEAD"),
+        &signature,
+        &signature,
+        "Initial commit",
+        &tree,
+        &[],
+    )?;
     Ok(())
 }

@@ -48,7 +48,9 @@ pub enum Commands {
     #[command(visible_alias("im"))]
     Import {
         path: String,
-    }
+    },
+    #[command(visible_alias("s"))]
+    Sync,
 }
 
 #[derive(Subcommand)]

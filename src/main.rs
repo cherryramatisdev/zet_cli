@@ -21,5 +21,6 @@ fn main() {
         cli::Commands::Agenda => todo!(),
         cli::Commands::Import { path } => todo!(),
         cli::Commands::Edit { term } => todo!(),
+        cli::Commands::Sync => cmds::sync::call().unwrap_print(),
     }
 }

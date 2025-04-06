@@ -27,8 +27,8 @@ the rest of the notes
 7. `zet (a)genda`: List all the checkboxes `- [ ]` in your repository and print
 out a list of unfinished todos with optional schedules (with the syntax
 `@schedule <date>`)
-8. `zet (im)port`: Import a directory with a *particular structure* into our
-another repo
+8. `zet (im)port`: Import a directory with a *particular structure* into our another repo
+9. `zet (s)ync`: Push the changes to a remote if it actually has one configured
 
 > That *particular structure* is: `<numeric_id>/README.md` for each entry,
 inside the directory with the numeric id its possible to have assets, we'll

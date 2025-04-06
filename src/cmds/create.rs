@@ -1,6 +1,7 @@
 use std::io::BufRead;
 
 use anyhow::bail;
+use git2::{IndexAddOption, Repository};
 
 use crate::repo_schema::{Entry, RepoSchema};
 
@@ -12,22 +13,40 @@ pub fn call() -> anyhow::Result<()> {
 
     let new_id = match schema.entries.last() {
         Some(entry) => entry.id + 1,
-        None => 1
+        None => 1,
     };
 
-    std::fs::create_dir(format!("{}/{}", &schema_path, &new_id))?;   
+    std::fs::create_dir(format!("{}/{}", &schema_path, &new_id))?;
     std::fs::write(format!("{}/{}/README.md", &schema_path, &new_id), &content)?;
 
     schema.entries.push(Entry {
         id: new_id,
-        title: header,
+        title: header.clone(),
         created_at: chrono::Local::now().naive_local(),
         modified_at: None,
         dir_path: new_id.to_string(),
-        entry_file: String::from("README.md")
+        entry_file: String::from("README.md"),
     });
 
     schema.save()?;
+
+    let repo = Repository::open(schema_path)?;
+    let head = repo.head()?;
+    let parent_commit = repo.find_commit(head.target().unwrap())?;
+    let mut index = repo.index()?;
+    index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
+    index.write()?;
+    let tree_oid = index.write_tree()?;
+    let tree = repo.find_tree(tree_oid)?;
+    let signature = repo.signature()?;
+    repo.commit(
+        Some("HEAD"),
+        &signature,
+        &signature,
+        format!("Add new note: {}", header).as_str(),
+        &tree,
+        &[&parent_commit],
+    )?;
 
     Ok(())
 }
@@ -68,7 +87,9 @@ mod test {
 
     #[test]
     fn get_rando_file_name_test() {
-        let mock_time = chrono::Local.with_ymd_and_hms(2023, 5, 15, 10, 30, 45).unwrap();
+        let mock_time = chrono::Local
+            .with_ymd_and_hms(2023, 5, 15, 10, 30, 45)
+            .unwrap();
         let result = get_rando_file_name(mock_time);
         assert_eq!(result, "/tmp/notes_15052023103045.md");
     }

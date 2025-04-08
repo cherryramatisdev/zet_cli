@@ -88,7 +88,7 @@ pub fn create_note(
             title: header,
             created_at: chrono::Local::now().naive_local(),
             modified_at: None,
-            dir_path: format!("{}/{}", schema_path, new_id.to_string()),
+            dir_path: new_id.to_string(),
             entry_file: String::from("README.md"),
         })
     }

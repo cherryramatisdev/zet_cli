@@ -3,7 +3,10 @@ use colored::Colorize;
 use regex::Regex;
 use std::io::BufRead;
 
-use crate::{error_management::err_print, repo_schema::{Entry, RepoSchema}};
+use crate::{
+    error_management::err_print,
+    repo_schema::{Entry, RepoSchema},
+};
 
 pub fn call(path: String) -> Result<()> {
     let dirs: Vec<String> = std::fs::read_dir(&path)?
@@ -33,7 +36,6 @@ pub fn call(path: String) -> Result<()> {
     }
 
     let mut schema = RepoSchema::get_config()?;
-    let schema_path = RepoSchema::get_schema_path()?;
 
     for dir in &dirs {
         let src_path = format!("{}/{}", &path, &dir);
@@ -46,7 +48,7 @@ pub fn call(path: String) -> Result<()> {
 
         if !header.contains("#") {
             err_print(format!("Format error on note [{}]: Your note should have a top level title (#) on the first line.", &src_path));
-            continue
+            continue;
         }
 
         let header = header.replace("#", "");
@@ -63,7 +65,7 @@ pub fn call(path: String) -> Result<()> {
             title: header,
             created_at: chrono::Local::now().naive_local(),
             modified_at: None,
-            dir_path: format!("{}/{}", schema_path, id.to_string()),
+            dir_path: id.to_string(),
             entry_file: String::from("README.md"),
         });
 

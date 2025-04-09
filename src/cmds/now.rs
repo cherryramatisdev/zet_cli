@@ -18,7 +18,7 @@ pub fn call() -> Result<()> {
         .find(|entry| entry.title == header.to_string());
 
     let schema = if let Some(entry) = entry {
-        let path = format!("{}/{}", entry.dir_path, entry.entry_file);
+        let path = format!("{}/{}/{}", schema_path, entry.dir_path, entry.entry_file);
 
         std::process::Command::new("nvim").arg(&path).status()?;
 

@@ -1,4 +1,6 @@
 use clap::{Parser, Subcommand};
+use std::default::Default;
+use strum_macros::{Display, EnumIter};
 
 #[derive(Parser)]
 #[command(name = "zet", version, about, long_about)]
@@ -7,10 +9,11 @@ pub struct Cli {
     pub command: Commands,
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, EnumIter, Display, Default)]
 pub enum Commands {
     /// Initialize the repo in the current empty directory
     #[command(visible_alias("i"))]
+    #[default]
     Init,
     /// Print all the titles from the entries (the tags are presented alongside the title, for easy
     /// filtering in notes like journaling or other tag)
@@ -49,11 +52,12 @@ pub enum Commands {
     View { term: String },
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, EnumIter, Display, Default)]
 pub enum ConfigCommands {
     /// Print all the values currently set for the config (including defaults, the default should
     /// contain a label expliciting its default value)
     #[command(visible_alias("p"))]
+    #[default]
     Print,
     /// Change or create a particular key on the config, errors out if the key doesn't exist on the
     /// spec

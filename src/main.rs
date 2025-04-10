@@ -1,15 +1,29 @@
 use clap::Parser;
-use cli::Cli;
+use cli::{Cli, Commands};
+use strum::IntoEnumIterator;
 
 use error_management::ResultExt;
 
 mod cli;
 mod cmds;
 mod error_management;
-mod repo_schema;
 mod git_utils;
+mod repo_schema;
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let cmds = Commands::iter()
+        .map(|v| v.to_string().to_lowercase())
+        .collect::<Vec<String>>();
+
+    if args.len() > 1 {
+        let cmd = &args[1];
+
+        if !cmds.contains(cmd) {
+            return cmds::edit::call(cmd.to_string()).unwrap_print();
+        }
+    }
+
     let cli = Cli::parse();
 
     match cli.command {

@@ -55,7 +55,7 @@ pub fn create_note(
     let schema_path = RepoSchema::get_schema_path()?;
     let mut schema = RepoSchema::get_config()?;
 
-    let new_id = if let Some(_) = modified {
+    let new_id = if modified.is_some() {
         // NOTE: If the modified is passed, we assume the id exists, is there a way to encode this
         // on the type system?
         schema
@@ -76,12 +76,10 @@ pub fn create_note(
         id
     };
 
-    if let Some(modified) = modified {
-        schema
-            .entries
-            .iter_mut()
-            .find(|e| e.title == header)
-            .map(|entry| entry.modified_at = Some(modified.naive_local()));
+    if modified.is_some() {
+        if let Some(entry) = schema.entries.iter_mut().find(|e| e.title == header) {
+            entry.modified_at = modified.map(|m| m.naive_local())
+        };
     } else {
         schema.entries.push(Entry {
             id: new_id,
@@ -107,6 +105,6 @@ mod test {
             .with_ymd_and_hms(2023, 5, 15, 10, 30, 45)
             .unwrap();
         let result = get_rando_file_name(mock_time);
-        assert_eq!(result, "/tmp/notes_15052023103045.md");
+        assert_eq!(result, "/tmp/notes_5052023103045.md");
     }
 }

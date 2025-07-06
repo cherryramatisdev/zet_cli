@@ -87,6 +87,14 @@ impl RepoSchema {
         Ok(schema)
     }
 
+    // TODO: maybe this can be in other place? don't know
+    pub fn get_editor() -> String {
+        match std::env::var("EDITOR") {
+            Ok(path) => path,
+            Err(_) => "nvim".to_string()
+        }
+    }
+
     pub fn to_json_string(&self) -> Result<String> {
         let json = serde_json::to_string(self)?;
 

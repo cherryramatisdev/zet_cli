@@ -20,7 +20,7 @@ pub fn call() -> Result<()> {
 
 fn get_note_interactively() -> Result<(String, String), anyhow::Error> {
     let file_path = get_rando_file_name(chrono::Local::now());
-    std::process::Command::new("nvim")
+    std::process::Command::new(RepoSchema::get_editor())
         .arg(&file_path)
         .status()?;
     let file = std::fs::File::open(&file_path)?;

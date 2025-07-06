@@ -20,7 +20,7 @@ pub fn call() -> Result<()> {
     let schema = if let Some(entry) = entry {
         let path = format!("{}/{}/{}", schema_path, entry.dir_path, entry.entry_file);
 
-        std::process::Command::new("nvim").arg(&path).status()?;
+        std::process::Command::new(RepoSchema::get_editor()).arg(&path).status()?;
 
         let content = std::fs::read_to_string(&path)?;
 
@@ -30,7 +30,7 @@ pub fn call() -> Result<()> {
 
         write_line_to_file(&path, format!("# {}", header).as_str())?;
 
-        std::process::Command::new("nvim").arg(&path).status()?;
+        std::process::Command::new(RepoSchema::get_editor()).arg(&path).status()?;
 
         let content = std::fs::read_to_string(&path)?;
 

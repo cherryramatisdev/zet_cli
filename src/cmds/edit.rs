@@ -14,7 +14,7 @@ pub fn call(term: String) -> Result<()> {
     match entry {
         Some(entry) => {
             let path = format!("{}/{}/{}", schema_path, entry.dir_path, entry.entry_file);
-            std::process::Command::new("nvim").arg(&path).status()?;
+            std::process::Command::new(RepoSchema::get_editor()).arg(&path).status()?;
 
             entry.modified_at = Some(chrono::Local::now().naive_local());
 

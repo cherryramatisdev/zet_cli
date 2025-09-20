@@ -1,4 +1,4 @@
-use std::io::BufRead;
+use std::io::{BufRead, IsTerminal, Read};
 
 use anyhow::{bail, Result};
 
@@ -6,13 +6,19 @@ use crate::git_utils;
 use crate::repo_schema::{Entry, RepoSchema};
 
 pub fn call() -> Result<()> {
-    let (header, content) = get_note_interactively()?;
+    // NOTE: If it's running on a pipeline
+    let (header, content) = if !std::io::stdin().is_terminal() {
+        let mut buffer = String::new();
+        std::io::stdin().read_to_string(&mut buffer)?;
+        (String::from("Piped content"), buffer)
+    } else {
+        get_note_interactively()?
+    };
 
     let schema_path = RepoSchema::get_schema_path()?;
     let schema = create_note(header.clone(), content, None)?;
 
     schema.save()?;
-
     git_utils::commit(format!("Add new note: {}", header), Some(schema_path))?;
 
     Ok(())
